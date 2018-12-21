@@ -15,25 +15,24 @@
 //std::signal(SIGTERM, eines::signal::signal_handler);
 //or use the following macros
 
-//*nix
-#ifndef __WIN32__
-	#define MACRO_signalHandler std::signal(SIGTERM, eines::signal::signal_handler_f); \
-	std::signal(SIGINT, eines::signal::signal_handler_f); \
-	std::signal(SIGHUP, eines::signal::signal_handler_f);
+//linux
+#ifdef Q_OS_LINUX
+    #define MACRO_signalHandler std::signal(SIGTERM, signalso::signal_handler_f); \
+    std::signal(SIGINT, signalso::signal_handler_f); \
+    std::signal(SIGHUP, signalso::signal_handler_f);
 //use this macro to set the process to the lowest priority
 	#define MACRO_niceSignalHander nice(19); \
 	MACRO_signalHandler
 //windows
-#else
-	#define MACRO_signalHandler std::signal(SIGTERM, eines::signal::signal_handler_f); \
-	std::signal(SIGINT, eines::signal::signal_handler_f); \
-	std::signal(SIGBREAK, eines::signal::signal_handler_f);
+#endif
+#ifdef Q_OS_WIN
+    #define MACRO_signalHandler std::signal(SIGTERM, signalso::signal_handler_f); \
+    std::signal(SIGINT, signalso::signal_handler_f); \
+    std::signal(SIGBREAK, signalso::signal_handler_f);
 //windows doesn't have nice
 #endif
 
-namespace eines
-{
-namespace signal
+namespace signalso
 {
 //which signal hit so it can be checked outside, by notset/initial/default is -255
 extern EXPIMP_SIGNALSO int signalNumber_f();
@@ -45,7 +44,7 @@ extern EXPIMP_SIGNALSO std::atomic_uint_fast32_t frequencyCheckMilliseconds_ato;
 //if it's greater than 0 other threads are still running
 extern EXPIMP_SIGNALSO uint_fast32_t threadCount_f();
 
-//timeout, if any, to end the program anyway if the other threads aren't ending
+//timeout, if any, to end the program anyway if the other threads, launched by this library, aren't ending
 extern EXPIMP_SIGNALSO uint_fast32_t timeOutMilliseconds_f();
 
 //signal handler function it will "notify" the threads to end
@@ -63,7 +62,7 @@ extern EXPIMP_SIGNALSO void signal_handler_f(int signal_par);
 extern EXPIMP_SIGNALSO bool isTheEnd_f(const uint_fast32_t checkEveryMilliseconds_par_con = frequencyCheckMilliseconds_ato);
 
 //becomes false when a signal is hit,
-//this one will choke the cpu if looped with no sleep or operation happening in between
+//this one will choke the cpu if looped with no sleep or operation happening in-between
 extern EXPIMP_SIGNALSO bool isRunning_f();
 
 //requires the signal handler to be set
@@ -75,11 +74,12 @@ extern EXPIMP_SIGNALSO void stopRunning_f();
 //the threads (they should be checking isRunning_f() periodically) are, theoretically, cleaning up/ending
 //if the timeout is hit, isTheEnd_f() will return true even if there are threads still running
 //and the main, which should be checking isTheEnd_f() should/will be able to "exit" (gracefully or not)
+//calling this function with different timeouts will always keep the largest timeout
 extern EXPIMP_SIGNALSO void launchThread_f(
 	const std::function<void()>& func_par_con
 	, const uint_fast32_t timeOut_par_con = 0
 );
 
 }
-}
+
 #endif /* SIGNALSO_SIGNAL_H_ */

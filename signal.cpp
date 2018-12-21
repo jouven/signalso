@@ -11,9 +11,8 @@
 #include <thread>
 #include <chrono>
 
-namespace eines
-{
-namespace signal
+
+namespace signalso
 {
 //IMPORTANT to be thread-safe things must be std::atomic,
 // volatile std::sig_atomic_t it's the closest thing before C++11 introduced std::atomic
@@ -119,6 +118,8 @@ void endPhase_f()
 //if the handler keeps reentering and a thread is stuck and it never hits the timeout
 //because it enters the handler again before the timeout is hit,
 //keep dividing the timeout value by 2 to force eventually it will get hit
+//reentering the handler undos the progress the previous handler call did @local variable wise
+//so it will reset any timeout waiting endPhase_f did
 std::atomic_bool reenteredHandler_ato(false);
 void signal_handler_f(int signal_par)
 {
@@ -173,4 +174,4 @@ void launchThread_f(
 }
 
 }
-}
+
