@@ -3,7 +3,7 @@ C++ library to manage detached threads and deal with the most common signals. It
 
 Compilation
 -----------
-Requires qmake (not the full Qt library)
+Requires Qt library (for the shared library macros required for windows)
 
 Run (in signalso source directory or pointing to it):
 
