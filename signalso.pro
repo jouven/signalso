@@ -1,5 +1,6 @@
 #message($$QMAKESPEC)
-QT -= gui core
+#requires core for the shared library macros
+QT -= gui
 
 TARGET = signalso
 TEMPLATE = lib
