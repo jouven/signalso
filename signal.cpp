@@ -2,7 +2,6 @@
 #include "signal.hpp"
 
 #ifdef DEBUGJOUVEN
-#include "backwardSTso/backward.hpp"
 #include <QDateTime>
 #include "essentialQtso/essentialQt.hpp"
 #include "essentialQtso/macros.hpp"
@@ -73,7 +72,7 @@ void addThreatAndTimeoutMilliseconds_f(const uint_fast32_t timeOut_par_con)
 void endPhase_f()
 {
 #ifdef DEBUGJOUVEN
-    qtOutLine_f(DEBUGDATETIMEANDSOURCE + "frequencyCheckMilliseconds: " + QString::number(frequencyCheckMilliseconds_ato) + " threadCounter: " + QString::number(threadCounter_ato));
+	qtStdout_f() <<  DEBUGDATETIMEANDSOURCE << "frequencyCheckMilliseconds: " << QString::number(frequencyCheckMilliseconds_ato) << " threadCounter: " << QString::number(threadCounter_ato) << Qt::endl;
 #endif
 	std::chrono::steady_clock::time_point start;
 	if (timeOutMilliseconds_ato > 0)
@@ -86,7 +85,7 @@ void endPhase_f()
 	while (threadCounter_ato != 0 and not timeoutHit)
 	{
 #ifdef DEBUGJOUVEN
-        qtOutLine_f(DEBUGDATETIMEANDSOURCE + "(while) threadCounter: " + QString::number(threadCounter_ato));
+		qtStdout_f() << DEBUGDATETIMEANDSOURCE << "(while) threadCounter: " << QString::number(threadCounter_ato) << Qt::endl;
 #endif
 		//it's is safe to use this in a signal handler uses nanosleep
 		std::this_thread::sleep_for(std::chrono::milliseconds(
@@ -98,12 +97,12 @@ void endPhase_f()
 			                 end - start));
 			timeoutHit = elapsed.count() > (timeOutMilliseconds_ato and timeOutMilliseconds_ato != 0);
 #ifdef DEBUGJOUVEN
-            qtOutLine_f(DEBUGDATETIMEANDSOURCE + "elapsed.count(): " + QString::number(elapsed.count()) + " timeoutHit: " + QSTRINGBOOL(timeoutHit));
+			qtStdout_f() << DEBUGDATETIMEANDSOURCE << "elapsed.count(): " << QString::number(elapsed.count()) << " timeoutHit: " + QSTRINGBOOL(timeoutHit) << Qt::endl;
 #endif
 		}
 	}
 #ifdef DEBUGJOUVEN
-    qtOutLine_f(DEBUGDATETIMEANDSOURCE + "timeoutHit: " + QSTRINGBOOL(timeoutHit) + " threadCounter: " + QString::number(threadCounter_ato));
+	qtStdout_f() << DEBUGDATETIMEANDSOURCE << "timeoutHit: " << QSTRINGBOOL(timeoutHit) << " threadCounter: " << QString::number(threadCounter_ato) << Qt::endl;
 #endif
 	isTheEnd_ato = true;
 }
@@ -117,7 +116,7 @@ std::atomic_bool reenteredHandler_ato(false);
 void signal_handler_f(int signal_par)
 {
 #ifdef DEBUGJOUVEN
-    qtOutLine_f(DEBUGDATETIMEANDSOURCE + "signal_handler: " + QString::number(signal_par));
+	qtStdout_f() << DEBUGDATETIMEANDSOURCE <<"signal_handler: " << QString::number(signal_par) << Qt::endl;
 #endif
 	if (reenteredHandler_ato and timeOutMilliseconds_ato > 0)
 	{
